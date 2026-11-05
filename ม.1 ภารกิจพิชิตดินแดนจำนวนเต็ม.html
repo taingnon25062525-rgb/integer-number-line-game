@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ภารกิจพิชิตดินแดนจำนวนเต็ม</title>
+
+<style>
+:root{
+ --navy:#203f91;
+ --blue:#397cf0;
+ --gold:#f2b500;
+ --ink:#172554;
+ --muted:#64748b;
+ --green:#168653;
+ --red:#d94848;
+ --line:#243f91;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#fff;
+ color:var(--ink);
+ font-family:Tahoma,"Noto Sans Thai",system-ui,sans-serif
+}
+.wrap{
+ width:min(100%,1120px);
+ margin:0 auto;
+ padding:22px 20px 36px
+}
+header{text-align:center;margin:12px 0 24px}
+.brand{
+ font-size:clamp(24px,4vw,36px);
+ font-weight:900;
+ color:#1f3e8d
+}
+.brand .sword{margin-right:8px}
+.subtitle{
+ font-size:14px;
+ color:#64748b;
+ margin-top:2px
+}
+.namebar{
+ background:#e2e8f0;
+ border-radius:11px;
+ padding:15px 18px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:10px;
+ flex-wrap:wrap;
+ margin-bottom:19px
+}
+.namebar label{font-weight:800}
+input{font:inherit}
+#playerName{
+ width:min(280px,100%);
+ border:2px solid #cbd5e1;
+ border-radius:7px;
+ padding:9px 12px;
+ text-align:center;
+ background:white;
+ font-weight:700
+}
+button{
+ border:0;
+ border-radius:7px;
+ padding:10px 17px;
+ font:inherit;
+ font-weight:800;
+ cursor:pointer;
+ transition:transform .12s,filter .12s
+}
+button:hover{
+ filter:brightness(.97);
+ transform:translateY(-1px)
+}
+button:disabled{
+ opacity:.45;
+ cursor:not-allowed;
+ transform:none
+}
+.btn-blue{background:#203f91;color:white}
+.btn-gold{background:#efb000;color:#fff}
+.btn-green{background:#168653;color:white}
+.btn-light{background:#e8eefc;color:#203f91}
+
+.status{
+ background:linear-gradient(100deg,#203f91,#397cf0);
+ color:#fff;
+ border-radius:11px;
+ padding:13px 22px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:12px;
+ flex-wrap:wrap;
+ font-size:17px;
+ font-weight:800;
+ margin-bottom:19px
+}
+.status strong{color:#ffe56a}
+.counter{
+ display:inline-block;
+ background:#ffffff35;
+ border-radius:6px;
+ padding:3px 12px;
+ min-width:40px;
+ text-align:center;
+ font-size:20px
+}
+.missionbar{
+ border:2px solid #e9ad00;
+ background:#fff18a;
+ border-radius:11px;
+ padding:14px 16px;
+ text-align:center;
+ color:#8b5a00;
+ font-size:19px;
+ font-weight:900;
+ margin-bottom:38px
+}
+.missionbar button{margin-left:12px}
+.line-card{
+ border:1px dashed #cbd5e1;
+ border-radius:10px;
+ background:#fcfcfd;
+ padding:15px 12px 12px;
+ margin-bottom:20px
+}
+svg{
+ display:block;
+ width:100%;
+ height:auto;
+ touch-action:manipulation
+}
+.axis{stroke:var(--line);stroke-width:3}
+.tick{stroke:var(--line);stroke-width:2}
+.tick-label{
+ font-size:14px;
+ fill:#111827;
+ text-anchor:middle;
+ font-weight:700
+}
+.tick-label.zero{fill:#e03131}
+.selectable{cursor:pointer;outline:none}
+.selectable:hover .tick-hit{fill:#dbeafe}
+.tick-hit{fill:transparent}
+.knight{
+ font-size:28px;
+ text-anchor:middle;
+ dominant-baseline:middle;
+ pointer-events:none
+}
+.arrowline{
+ stroke:#e09b00;
+ stroke-width:4;
+ stroke-linecap:round;
+ fill:none
+}
+.info-grid{
+ display:grid;
+ grid-template-columns:1.25fr .75fr;
+ gap:18px
+}
+.box{
+ border:1px solid #e2e8f0;
+ border-radius:12px;
+ padding:17px;
+ background:#fff
+}
+.box h2{
+ font-size:19px;
+ margin:0 0 12px;
+ color:#203f91
+}
+.question{
+ background:#f1f5ff;
+ border:1px solid #d7e2ff;
+ border-radius:10px;
+ text-align:center;
+ padding:15px;
+ margin:10px 0;
+ font-size:clamp(21px,3vw,29px);
+ font-weight:900;
+ color:#1e3a8a
+}
+.instruction{
+ text-align:center;
+ color:#475569;
+ font-size:14px;
+ line-height:1.6
+}
+.answer-tools{
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ gap:10px;
+ flex-wrap:wrap;
+ margin-top:12px
+}
+.answer-display{
+ background:#fff7d6;
+ border:1px solid #f2cf62;
+ border-radius:8px;
+ padding:8px 18px;
+ font-weight:900;
+ min-width:100px;
+ text-align:center
+}
+.feedback{
+ text-align:center;
+ font-weight:800;
+ min-height:25px;
+ margin-top:10px
+}
+.feedback.good{color:var(--green)}
+.feedback.bad{color:var(--red)}
+.score-note{
+ font-size:13px;
+ color:#64748b;
+ line-height:1.7
+}
+.rank-panel{
+ display:none;
+ text-align:center;
+ border:2px solid #e9b800;
+ background:linear-gradient(135deg,#fff9d9,#fff);
+ border-radius:15px;
+ padding:24px;
+ margin-top:18px
+}
+.rank-icon{font-size:56px}
+.rank-title{
+ font-size:27px;
+ color:#203f91;
+ font-weight:900;
+ margin:4px
+}
+.final-score{
+ font-size:23px;
+ font-weight:900;
+ color:#9a6700
+}
+.history{
+ margin-top:15px;
+ width:100%;
+ border-collapse:collapse;
+ font-size:14px
+}
+.history th,.history td{
+ padding:8px;
+ border-bottom:1px solid #e2e8f0;
+ text-align:center
+}
+.history th{
+ background:#f1f5f9;
+ color:#334155
+}
+.small{font-size:12px;color:#64748b}
+
+@media(max-width:700px){
+ .wrap{padding:14px 12px 28px}
+ .status{
+  justify-content:center;
+  text-align:center;
+  padding:12px
+ }
+ .info-grid{grid-template-columns:1fr}
+ .missionbar{
+  font-size:16px;
+  margin-bottom:22px
+ }
+ .missionbar button{margin:9px 0 0}
+ .namebar{gap:8px}
+ .namebar label{
+  width:100%;
+  text-align:center
+ }
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<header>
+ <div class="brand">
+  <span class="sword">⚔️</span>
+  ภารกิจพิชิตดินแดนจำนวนเต็ม
+ </div>
+
+ <div class="subtitle">
+  นวัตกรรมเพื่อประกอบกิจกรรมสำหรับนักเรียนชั้น ม.1
+  | เรียนรู้จำนวนเต็มผ่านภารกิจอัศวิน
+ </div>
+
+ <div class="subtitle"
+ style="font-weight:800;color:#203f91;margin-top:5px">
+  ผู้สร้างนวัตกรรม: นายสุรศักดิ์ ยวนจิตต์
+ </div>
+</header>
+
+<section class="namebar">
+ <label for="playerName">
+  🏰 ตั้งชื่ออัศวิน / นักเรียน :
+ </label>
+
+ <input id="playerName"
+ maxlength="24"
+ value="อัศวินผู้กล้า"
+ placeholder="พิมพ์ชื่ออัศวิน">
+
+ <button class="btn-blue" id="saveName">
+  ยืนยันชื่อ
+ </button>
+
+ <span id="nameMessage"
+ class="small"
+ aria-live="polite"></span>
+</section>
+
+<section class="status">
+
+ <div>
+  อัศวินประจำตัว:
+  <strong id="displayName">อัศวินผู้กล้า</strong>
+ </div>
+
+ <div>
+  ผ่านด่านสำเร็จ:
+  <span class="counter" id="progress">0</span> / 10
+ </div>
+
+ <div>
+  คะแนนรวม:
+  <span class="counter" id="xp">0</span> XP
+ </div>
+
+</section>
+
+<section class="missionbar">
+
+ 🎯 คลิกปุ่มขวามือเพื่อรับโจทย์ภารกิจอัศวิน
+
+ <button class="btn-gold" id="missionBtn">
+  🎲 สุ่มโจทย์
+ </button>
+
+</section>
+
+<section class="line-card">
+
+ <svg id="numberLine"
+ viewBox="0 0 900 190"
+ role="img"
+ aria-label="เส้นจำนวนตั้งแต่ลบสิบถึงสิบ">
+
+  <defs>
+
+   <marker id="arrowEnd"
+   markerWidth="8"
+   markerHeight="8"
+   refX="5"
+   refY="3"
+   orient="auto">
+
+    <path d="M0 0 L6 3 L0 6"
+    fill="none"
+    stroke="#203f91"
+    stroke-width="1.4"/>
+
+   </marker>
+
+   <marker id="moveEnd"
+   markerWidth="8"
+   markerHeight="8"
+   refX="5"
+   refY="3"
+   orient="auto">
+
+    <path d="M0 0 L6 3 L0 6"
+    fill="none"
+    stroke="#e09b00"
+    stroke-width="1.4"/>
+
+   </marker>
+
+  </defs>
+
+  <line class="axis"
+  x1="42" y1="72"
+  x2="858" y2="72"
+  marker-start="url(#arrowEnd)"
+  marker-end="url(#arrowEnd)"/>
+
+  <g id="ticks"></g>
+  <g id="moveLayer"></g>
+
+  <g id="knightLayer">
+
+   <circle id="knightHalo"
+   cx="450" cy="42" r="23"
+   fill="#fff"
+   stroke="#e2e8f0"
+   stroke-width="2"/>
+
+   <text id="knight"
+   class="knight"
+   x="450" y="43">🧑‍🚀</text>
+
+  </g>
+
+ </svg>
+
+ <div class="small" style="text-align:center">
+  วิธีตอบ: เมื่อได้รับโจทย์ ให้คลิกตำแหน่งคำตอบบนเส้นจำนวน
+  แล้วกด “ยืนยันคำตอบ”
+ </div>
+
+</section>
+
+<section class="info-grid">
+
+ <div class="box">
+
+  <h2>📜 โจทย์ภารกิจ</h2>
+
+  <div class="question" id="question">
+   กดปุ่ม “สุ่มโจทย์” เพื่อเริ่มภารกิจข้อที่ 1
+  </div>
+
+  <div class="instruction" id="instruction">
+   อัศวินจะต้องแก้โจทย์จำนวนเต็มให้ครบ 10 ข้อ
+   <br>
+   เลือกคำตอบจากเส้นจำนวนด้านบน
+  </div>
+
+  <div class="answer-tools">
+
+   <span>คำตอบที่เลือก:</span>
+
+   <span class="answer-display" id="chosenAnswer">
+    ยังไม่ได้เลือก
+   </span>
+
+   <button class="btn-green"
+   id="submitBtn" disabled>
+    ⚔️ ยืนยันคำตอบ
+   </button>
+
+  </div>
+
+  <div class="feedback"
+  id="feedback"
+  aria-live="polite"></div>
+
+  <div class="answer-tools">
+
+   <button class="btn-light"
+   id="nextBtn" disabled>
+    โจทย์ข้อต่อไป ➜
+   </button>
+
+  </div>
+
+ </div>
+
+ <aside class="box">
+
+  <h2>🛡️ กติกาภารกิจ</h2>
+
+  <div class="score-note">
+
+   <p>
+    ✅ ตอบถูก
+    <b style="color:#168653">+10 XP</b>
+   </p>
+
+   <p>
+    ❌ ตอบผิด
+    <b style="color:#d94848">−5 XP</b>
+   </p>
+
+   <p>
+    🏁 มีโจทย์ทั้งหมด
+    <b>10 ข้อเท่านั้น</b>
+   </p>
+
+   <p>
+    🎯 เลือกคำตอบโดยคลิกตัวเลขบนเส้นจำนวน
+   </p>
+
+   <p>
+    🏆 เมื่อจบเกม ระบบจะประกาศระดับอัศวินตามคะแนนรวม
+   </p>
+
+  </div>
+
+  <div class="small" id="roundLabel">
+   สถานะ: พร้อมออกเดินทาง
+  </div>
+
+ </aside>
+
+</section>
+
+<section class="rank-panel" id="resultPanel">
+
+ <div class="rank-icon" id="rankIcon">🏆</div>
+
+ <div class="rank-title" id="rankTitle">
+  จอมอัศวิน
+ </div>
+
+ <div id="rankName"></div>
+
+ <div class="final-score" id="finalScore"></div>
+
+ <p id="rankDescription"></p>
+
+ <div id="summary"></div>
+
+ <button class="btn-blue" id="restartBtn">
+  🔄 เริ่มภารกิจใหม่
+ </button>
+
+</section>
+
+<div class="small"
+style="text-align:center;margin-top:22px;padding:12px;border-top:1px solid #e2e8f0">
+
+ ผู้สร้างนวัตกรรม:
+ <b style="color:#203f91">นายสุรศักดิ์ ยวนจิตต์</b>
+
+</div>
+
+</div>
+
+<script>
+(()=>{
+
+ const $=id=>document.getElementById(id);
+ const NS='http://www.w3.org/2000/svg';
+
+ const MIN=-10;
+ const MAX=10;
+ const LEFT=42;
+ const RIGHT=858;
+
+ let player='อัศวินผู้กล้า';
+ let score=0;
+ let completed=0;
+ let current=null;
+ let chosen=null;
+ let locked=false;
+ let history=[];
+
+ const x=n=>
+ LEFT+(n-MIN)/(MAX-MIN)*(RIGHT-LEFT);
+
+ const fmt=n=>
+ n<0?'−'+Math.abs(n):String(n);
+
+ function drawLine(){
+
+  const g=$('ticks');
+  g.innerHTML='';
+
+  for(let n=MIN;n<=MAX;n++){
+
+   const px=x(n);
+
+   const group=document.createElementNS(NS,'g');
+
+   group.setAttribute('class','selectable');
+   group.setAttribute('tabindex','0');
+   group.setAttribute('role','button');
+   group.setAttribute('aria-label','เลือก '+n);
+   group.dataset.value=n;
+
+   const hit=document.createElementNS(NS,'rect');
+
+   hit.setAttribute('x',px-18);
+   hit.setAttribute('y',48);
+   hit.setAttribute('width',36);
+   hit.setAttribute('height',76);
+   hit.setAttribute('rx',5);
+   hit.setAttribute('class','tick-hit');
+
+   group.appendChild(hit);
+
+   const tick=document.createElementNS(NS,'line');
+
+   tick.setAttribute('x1',px);
+   tick.setAttribute('x2',px);
+   tick.setAttribute('y1',62);
+   tick.setAttribute('y2',82);
+   tick.setAttribute('class','tick');
+
+   group.appendChild(tick);
+
+   const label=document.createElementNS(NS,'text');
+
+   label.setAttribute('x',px);
+   label.setAttribute('y',99);
+
+   label.setAttribute(
+    'class',
+    'tick-label'+(n===0?' zero':'')
+   );
+
+   label.textContent=n;
+
+   group.appendChild(label);
+
+   group.addEventListener('click',()=>select(n));
+
+   group.addEventListener('keydown',e=>{
+
+    if(e.key==='Enter'||e.key===' '){
+
+     e.preventDefault();
+     select(n);
+
+    }
+
+   });
+
+   g.appendChild(group);
+
+  }
+
+ }
+
+ function select(n){
+
+  if(!current||locked)return;
+
+  chosen=n;
+
+  $('chosenAnswer').textContent=fmt(n);
+
+  $('submitBtn').disabled=false;
+
+  $('knight').setAttribute('x',x(n));
+  $('knightHalo').setAttribute('cx',x(n));
+
+  document.querySelectorAll('.selectable').forEach(el=>{
+
+   el.querySelector('.tick-hit').setAttribute(
+    'fill',
+    Number(el.dataset.value)===n
+    ?'#dbeafe'
+    :'transparent'
+   );
+
+  });
+
+  drawArrow(current.a,n);
+
+ }
+
+ function drawArrow(from,to){
+
+  const g=$('moveLayer');
+  g.innerHTML='';
+
+  if(from===to)return;
+
+  const p=document.createElementNS(NS,'path');
+
+  p.setAttribute(
+   'd',
+   `M ${x(from)} 37 L ${x(to)} 37`
+  );
+
+  p.setAttribute('class','arrowline');
+  p.setAttribute('marker-end','url(#moveEnd)');
+
+  g.appendChild(p);
+
+ }
+
+ function setKnightAt(n){
+
+  $('knight').setAttribute('x',x(n));
+  $('knightHalo').setAttribute('cx',x(n));
+
+ }
+
+ function newQuestion(){
+
+  if(completed>=10||current&&!locked)return;
+
+  if(completed===10){
+   finish();
+   return;
+  }
+
+  let a,b,op,result;
+
+  do{
+
+   a=Math.floor(Math.random()*15)-7;
+   b=Math.floor(Math.random()*9)-4;
+
+   op=Math.random()<.5?'+':'−';
+
+   result=op==='+'?a+b:a-b;
+
+  }while(result<MIN||result>MAX);
+
+  current={a,b,op,result};
+
+  chosen=null;
+  locked=false;
+
+  $('question').textContent=
+  `${fmt(a)} ${op} (${fmt(b)}) = ?`;
+
+  $('instruction').innerHTML=
+  `เริ่มต้นที่ <b>${fmt(a)}</b> แล้วเคลื่อนที่บนเส้นจำนวนเพื่อหาผลลัพธ์`;
+
+  $('chosenAnswer').textContent='ยังไม่ได้เลือก';
+
+  $('feedback').textContent='';
+  $('feedback').className='feedback';
+
+  $('submitBtn').disabled=true;
+  $('nextBtn').disabled=true;
+
+  $('missionBtn').disabled=true;
+
+  $('missionBtn').textContent=
+  `⚔️ กำลังทำภารกิจข้อ ${completed+1}/10`;
+
+  $('roundLabel').textContent=
+  `สถานะ: กำลังทำภารกิจข้อ ${completed+1} จาก 10`;
+
+  setKnightAt(a);
+
+  $('moveLayer').innerHTML='';
+
+  $('progress').textContent=completed;
+
+ }
+
+ function submit(){
+
+  if(!current||chosen===null||locked)return;
+
+  locked=true;
+  completed++;
+
+  const correct=chosen===current.result;
+  const earned=correct?10:-5;
+
+  score+=earned;
+
+  history.push({
+
+   q:`${fmt(current.a)} ${current.op} (${fmt(current.b)})`,
+   answer:current.result,
+   chosen,
+   correct,
+   earned
+
+  });
+
+  $('xp').textContent=score;
+  $('progress').textContent=completed;
+
+  if(correct){
+
+   $('feedback').textContent=
+   '🎉 ถูกต้อง! อัศวินได้รับ +10 XP';
+
+   $('feedback').className='feedback good';
+
+  }else{
+
+   $('feedback').textContent=
+   `ยังไม่ถูกต้อง คำตอบคือ ${fmt(current.result)} (−5 XP)`;
+
+   $('feedback').className='feedback bad';
+
+  }
+
+  $('instruction').textContent=
+  `${fmt(current.a)} ${current.op} (${fmt(current.b)}) = ${fmt(current.result)}`;
+
+  setKnightAt(current.result);
+  drawArrow(current.a,current.result);
+
+  $('submitBtn').disabled=true;
+  $('missionBtn').disabled=false;
+
+  if(completed<10){
+
+   $('nextBtn').disabled=false;
+
+   $('nextBtn').textContent=
+   `รับภารกิจข้อ ${completed+1} ➜`;
+
+   $('missionBtn').textContent=
+   '🎲 สุ่มโจทย์ข้อถัดไป';
+
+   $('roundLabel').textContent=
+   `สถานะ: สำเร็จแล้ว ${completed} / 10 ข้อ`;
+
+  }else{
+
+   $('nextBtn').disabled=false;
+
+   $('nextBtn').textContent=
+   '🏆 ดูผลการผจญภัย';
+
+   $('missionBtn').textContent=
+   '🏁 ดูผลภารกิจ';
+
+   $('roundLabel').textContent=
+   'สถานะ: ทำครบทั้ง 10 ภารกิจแล้ว';
+
+  }
+
+ }
+
+ function finish(){
+
+  $('missionBtn').disabled=true;
+  $('nextBtn').disabled=true;
+  $('submitBtn').disabled=true;
+
+  let rank,icon,desc;
+
+  if(score>=90){
+
+   rank='จอมอัศวินในตำนาน';
+   icon='👑';
+   desc='ยอดเยี่ยม! ท่านเป็นสุดยอดผู้พิชิตดินแดนจำนวนเต็ม';
+
+  }else if(score>=70){
+
+   rank='อัศวินผู้กล้า';
+   icon='🛡️';
+   desc='เก่งมาก! ท่านมีความสามารถในการพิชิตจำนวนเต็ม';
+
+  }else if(score>=50){
+
+   rank='อัศวินฝึกหัด';
+   icon='⚔️';
+   desc='ทำได้ดี! ฝึกฝนอีกเล็กน้อยแล้วจะเป็นอัศวินผู้เก่งกาจ';
+
+  }else if(score>=0){
+
+   rank='ผู้เริ่มต้นเดินทาง';
+   icon='🧭';
+   desc='อย่าเพิ่งยอมแพ้ ลองทบทวนเรื่องจำนวนเต็มแล้วกลับมาฝึกใหม่';
+
+  }else{
+
+   rank='ผู้กล้าฝึกฝน';
+   icon='🌱';
+   desc='ทุกความพยายามคือการเรียนรู้ ฝึกฝนต่อไปแล้วจะเก่งขึ้น';
+
+  }
+
+  $('rankIcon').textContent=icon;
+  $('rankTitle').textContent=rank;
+
+  $('rankName').textContent=
+  `อัศวิน: ${player}`;
+
+  $('finalScore').textContent=
+  `คะแนนรวม ${score} XP`;
+
+  $('rankDescription').textContent=desc;
+
+  const correct=history.filter(h=>h.correct).length;
+  const wrong=10-correct;
+
+  let rows=
+  '<table class="history"><thead><tr>'+
+  '<th>ข้อ</th><th>โจทย์</th><th>คำตอบ</th>'+
+  '<th>ผล</th><th>คะแนน</th>'+
+  '</tr></thead><tbody>';
+
+  history.forEach((h,i)=>{
+
+   rows+=
+   `<tr>
+   <td>${i+1}</td>
+   <td>${h.q}</td>
+   <td>${fmt(h.chosen)}</td>
+   <td>${h.correct?'ถูก':'ผิด'}</td>
+   <td>${h.earned>0?'+':''}${h.earned}</td>
+   </tr>`;
+
+  });
+
+  rows+='</tbody></table>';
+
+  $('summary').innerHTML=
+  `<p>ตอบถูก <b style="color:#168653">${correct}</b> ข้อ |
+  ตอบผิด <b style="color:#d94848">${wrong}</b> ข้อ</p>${rows}`;
+
+  $('resultPanel').style.display='block';
+
+  $('resultPanel').scrollIntoView({
+   behavior:'smooth',
+   block:'center'
+  });
+
+  $('roundLabel').textContent='สถานะ: จบภารกิจ';
+
+ }
+
+ function restart(){
+
+  score=0;
+  completed=0;
+  current=null;
+  chosen=null;
+  locked=false;
+  history=[];
+
+  $('xp').textContent='0';
+  $('progress').textContent='0';
+
+  $('resultPanel').style.display='none';
+
+  $('question').textContent=
+  'กดปุ่ม “สุ่มโจทย์” เพื่อเริ่มภารกิจข้อที่ 1';
+
+  $('instruction').innerHTML=
+  'อัศวินจะต้องแก้โจทย์จำนวนเต็มให้ครบ 10 ข้อ<br>เลือกคำตอบจากเส้นจำนวนด้านบน';
+
+  $('chosenAnswer').textContent='ยังไม่ได้เลือก';
+  $('feedback').textContent='';
+
+  $('missionBtn').disabled=false;
+  $('missionBtn').textContent='🎲 สุ่มโจทย์';
+
+  $('nextBtn').disabled=true;
+  $('submitBtn').disabled=true;
+
+  $('roundLabel').textContent='สถานะ: พร้อมออกเดินทาง';
+
+  $('moveLayer').innerHTML='';
+
+  setKnightAt(0);
+
+ }
+
+ $('saveName').onclick=()=>{
+
+  const v=$('playerName').value.trim();
+
+  if(!v){
+
+   $('nameMessage').textContent='กรุณาตั้งชื่ออัศวิน';
+   return;
+
+  }
+
+  player=v;
+
+  $('displayName').textContent=player;
+
+  $('nameMessage').textContent='บันทึกชื่อแล้ว ✓';
+
+ };
+
+ $('missionBtn').onclick=()=>{
+
+  if(completed===10){
+   finish();
+   return;
+  }
+
+  newQuestion();
+
+ };
+
+ $('submitBtn').onclick=submit;
+
+ $('nextBtn').onclick=()=>{
+
+  if(completed===10){
+   finish();
+  }else{
+   newQuestion();
+  }
+
+ };
+
+ $('restartBtn').onclick=restart;
+
+ drawLine();
+ setKnightAt(0);
+
+})();
+</script>
+
+</body>
+</html>
